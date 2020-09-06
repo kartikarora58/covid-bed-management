@@ -13,10 +13,12 @@ class Hello:
         btn = Button(root, text="click", command=self.on_click)
         btn.grid(row=1, column=0)
         root.mainloop()
+
     def on_click(self):
         print(self.hospital_type.get())
 
-ob=Hello()
+
+ob = Hello()
 ob.run_app()
 #
 # # import datetime

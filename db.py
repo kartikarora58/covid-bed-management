@@ -26,6 +26,11 @@ class DB:
         print("Successful")
 
     def edit_hospital(self, id):
-        query = {'_id':ObjectId(id)}
+        query = {'_id': ObjectId(id)}
         docs = list(self.collection.find(query, {'_id': 0, 'email': 0, 'password': 0}))
+        print(docs[0]['hospital_details'])
         return docs[0]['hospital_details']
+
+    def retrieve_data(self):
+        data = list(self.collection.find({}, {'hospital_details': 1, '_id': 0}))
+        return data

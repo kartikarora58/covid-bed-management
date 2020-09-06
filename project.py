@@ -3,6 +3,7 @@ from db import *
 from tkinter.ttk import *
 from tkinter import messagebox
 import datetime
+from tree_view import display
 
 
 class Bed:
@@ -18,8 +19,9 @@ class Bed:
         self.login_btn = Button(window, text="Login", command=self.login)
         self.login_btn.grid(row=0, column=0)
         self.register_btn = Button(window, text="Register", command=self.register)
-        self.register_btn.grid(row=0, column=3)
-        # table
+        self.register_btn.grid(row=0, column=1)
+        self.show_data = Button(window, text="Show Hospital List", command=display)
+        self.show_data.grid(row=0, column=2)
         window.mainloop()
 
     def register(self):
@@ -176,11 +178,14 @@ class Bed:
 
             print(auth_id, detail)
             self.db.save_hospital(id=auth_id, data=detail)
+            window.destroy()
+            messagebox.showinfo(message="Registration Successful")
+            display()
 
     def edit_hospital(self, id, detail):
         root = Tk()
         root.title(self.title)
-        root.geometry('400x300')
+        root.geometry('400x200')
         # Total oxygen beds
         total_oxygen = Label(root, text="Total Oxygen Beds")
         total_oxygen.grid(row=0, column=0)
@@ -205,7 +210,23 @@ class Bed:
         self.edit_vacant_ventilators = Entry(root, width=35)
         self.edit_vacant_ventilators.insert(0, string=detail['vacant_ventilator'])
         self.edit_vacant_ventilators.grid(row=3, column=1, pady=2)
+        update = Button(root, text="Update", command=lambda: self.update_hospital(id, detail,root))
+        update.grid(row=4, column=1, pady=4)
         root.mainloop()
+
+    def update_hospital(self, id, detail, root):
+        detail['oxygen_count'] = self.edit_total_oxygen.get()
+        detail['vacant_oxygen'] = self.edit_vacant_oxygen.get()
+        detail['ventilator_count'] = self.edit_total_ventilators.get()
+        detail['vacant_ventilator'] = self.edit_vacant_ventilators.get()
+        x = datetime.datetime.now()
+        timestamp = x.strftime("%d") + "-" + x.strftime("%b") + "," + x.strftime("%I") + ":" + x.strftime(
+            "%M") + " " + x.strftime("%p")
+        detail['timestamp'] = timestamp
+        self.db.save_hospital(id, detail)
+        root.destroy()
+        messagebox.showinfo(message="Bed Details Updated")
+        display()
 
 
 if __name__ == '__main__':
